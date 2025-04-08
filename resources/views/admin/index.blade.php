@@ -114,33 +114,6 @@
                 </div>
             </div>
 
-            <!-- Recent Devis -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="bg-green-600 px-6 py-4">
-                    <h2 class="text-xl font-semibold text-white">Recent Devis</h2>
-                </div>
-                <div class="divide-y divide-gray-200">
-                    @forelse($latestDevis as $devi)
-                    <div class="p-4 hover:bg-gray-50">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="font-medium text-gray-800">{{ $devi->client_name }}</p>
-                                <p class="text-sm text-gray-500">{{ $devi->created_at->format('M d, Y') }}</p>
-                            </div>
-                            <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">{{ $devi->status ?? 'Pending' }}</span>
-                        </div>
-                        <p class="mt-1 text-sm font-medium text-gray-900">MAD{{ number_format($devi->total_amount, 2) }}</p>
-                    </div>
-                    @empty
-                    <div class="p-4 text-center text-gray-500">
-                        No recent devis found
-                    </div>
-                    @endforelse
-                </div>
-                <div class="px-6 py-3 bg-gray-50 text-right">
-                    <a href="{{ route('devis.index') }}" class="text-sm font-medium text-green-600 hover:text-green-500">View all</a>
-                </div>
-            </div>
         </div>
     </div>
 </div>

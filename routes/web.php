@@ -44,6 +44,8 @@ Route::get('/abonnements/plans', function () {
  * Routes accessible only to authenticated users.
  */
 Route::middleware(['auth'])->group(function () {
+    //! request payment all commissions
+    Route::post('/demendeallpaiement', [CommissionController::class, 'requestAllPayments'])->name('commissions.demandePaiementAll');
 
     // Common Logout Route
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -72,12 +74,15 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Freelancer'])->group(function () {
         Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])->name('freelancer.dashboard');
 
+
+
         // Commission Management
         Route::get('/commissions', [CommissionController::class, 'index'])->name('commissions.index');
         Route::get('/commissions/create', [CommissionController::class, 'create'])->name('commissions.create');
         Route::post('/commissions', [CommissionController::class, 'store'])->name('commissions.store');
         Route::get('/commissions/{commission}', [CommissionController::class, 'show'])->name('commissions.show');
-        Route::get('/commissions/{commission}/request-payment', [CommissionController::class, 'requestPayment'])->name('commissions.requestPayment');
+        Route::post('/commissions/{commission}/request-payment', [CommissionController::class, 'requestPayment'])->name('commissions.requestPayment');
+        Route::get('/commissions/demande-paiement-all', [CommissionController::class, 'demande_paiement_all'])->name('commissions.demande_paiement_all');
     });
 
     /**
@@ -101,9 +106,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Account Manager|Admin'])->group(function () {
         Route::prefix('commissions')->group(function () {
             Route::post('/{commission}/approve', [CommissionController::class, 'approve'])->name('commissions.approve');
-            Route::get('/{commission}/clear', [CommissionController::class, 'clearCommission'])->name('commissions.clearCommission');
-            // Optional: Add an approval index if needed
-            // Route::get('/approval', [CommissionController::class, 'approvalIndex'])->name('commissions.approval');
+            Route::post('/{commission}/clear', [CommissionController::class, 'clearCommission'])->name('commissions.clearCommission');
+            Route::post('/{commission}/approve-payment', [CommissionController::class, 'approve_payment'])->name('commissions.approve_payment');
         });
     });
 
@@ -125,10 +129,6 @@ Route::middleware(['auth'])->group(function () {
 
         // Plans Management
         Route::resource('plans', PlanController::class);
-
-        // Commission Approval (Super Admin also has access)
-        Route::post('/commissions/{commission}/approve', [CommissionController::class, 'approve'])->name('commissions.approve');
-        Route::get('/commissions/{commission}/clear', [CommissionController::class, 'clearCommission'])->name('commissions.clearCommission');
     });
 
     // General Commission Index Route (Accessible to all authenticated users with appropriate filtering in controller)

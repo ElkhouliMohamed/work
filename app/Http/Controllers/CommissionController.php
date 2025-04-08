@@ -25,9 +25,8 @@ class CommissionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:Freelancer', ['only' => ['create', 'store', 'show', 'requestPayment']]);
+        $this->middleware('role:Freelancer', ['only' => ['create', 'store', 'show', 'requestPayment', 'requestAllPayments']]);
         $this->middleware('role:Account Manager|Admin', ['only' => ['approve', 'clearCommission']]);
-        // Removed 'index' from Account Manager|Admin restriction to allow Freelancers access
     }
 
     public function index(Request $request)
@@ -35,11 +34,15 @@ class CommissionController extends Controller
         $user = Auth::user();
         $perPage = $request->input('per_page', 10);
 
-        $query = Commission::with('devis', 'freelancer')
-            ->orderBy('created_at', 'desc');
+        $query = Commission::with('devis', 'freelancer');
 
         if ($user->hasRole('Freelancer')) {
             $query->where('freelancer_id', $user->id);
+            $query->orderBy('created_at', 'desc');
+        } elseif ($user->hasRole('Account Manager')) {
+            $query->orderByRaw('demande_paiement DESC, created_at DESC');
+        } else {
+            $query->orderBy('created_at', 'desc');
         }
 
         if ($request->has('status')) {
@@ -47,7 +50,8 @@ class CommissionController extends Controller
         }
 
         $contractCount = DB::table('commissions')
-            ->where('freelancer_id', $user->id)->where('statut', 'en attente')
+            ->where('freelancer_id', $user->id)
+            ->where('statut', 'en attente')
             ->count();
 
         $sold = 0;
@@ -72,6 +76,87 @@ class CommissionController extends Controller
 
         return view('commissions.index', compact('commissions', 'stats', 'sold', 'level', 'contractCount'));
     }
+
+    public function requestAllPayments(Request $request)
+    {
+        $user = auth()->user();
+
+        $commissions = Commission::where('freelancer_id', $user->id)
+            ->where('statut', 'En Attente')
+            ->get();
+
+        if ($commissions->isEmpty()) {
+            return redirect()->back()->with('warning', 'No pending commissions found.');
+        }
+
+        foreach ($commissions as $commission) {
+            $commission->update([
+                'demande_paiement' => true,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Toutes les commissions en attente ont été demandées pour paiement.');
+    }
+
+    public function approve_payment(Commission $commission)
+    {
+        if (!auth()->user()->hasRole(['Account Manager', 'Admin', 'Super Admin'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        if ($commission->statut !== 'en attente' || !$commission->demande_paiement) {
+            return redirect()->back()->with('error', 'This commission cannot be approved.');
+        }
+
+        $commission->update([
+            'statut' => 'payé',
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+        ]);
+
+        Log::channel('commissions')->notice('Commission approved', [
+            'id' => $commission->id,
+            'approver' => auth()->user()->name,
+            'amount' => $commission->montant,
+        ]);
+
+        return redirect()->back()->with('success', 'Payment approved successfully.');
+    }
+
+    // Include approveAllPayments if you want bulk approval
+    public function approveAllPayments(Request $request)
+    {
+        if (!auth()->user()->hasRole(['Account Manager', 'Admin', 'Super Admin'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $commissions = Commission::where('demande_paiement', true)
+            ->where('statut', 'En Attente')
+            ->get();
+
+        if ($commissions->isEmpty()) {
+            return redirect()->back()->with('warning', 'No commissions requested for payment found.');
+        }
+
+        $approver = auth()->user();
+
+        foreach ($commissions as $commission) {
+            $commission->update([
+                'statut' => 'payé',
+                'approved_by' => $approver->id,
+                'approved_at' => now(),
+            ]);
+
+            Log::channel('commissions')->notice('Commission approved', [
+                'id' => $commission->id,
+                'approver' => $approver->name,
+                'amount' => $commission->montant,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'All payment requests have been approved successfully.');
+    }
+
 
     public function create()
     {
