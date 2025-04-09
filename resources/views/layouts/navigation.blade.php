@@ -12,7 +12,6 @@
 
     <!-- Navigation Menu -->
     <ul class="space-y-4">
-        <!-- Existing Links -->
         <li>
             <a href="{{ route('dashboard') }}"
                 class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
@@ -35,101 +34,91 @@
             </a>
         </li>
 
-        <!-- New Links -->
         @role('Super Admin')
-            <li>
-                <a href="{{ route('plans.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-layer-group text-xl"></i>
-                    <span class="ml-3 menu-text">Gestion des Plans</span>
-                </a>
-            </li>
+        <li>
+            <a href="{{ route('plans.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-layer-group text-xl"></i>
+                <span class="ml-3 menu-text">Gestion des Plans</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.data') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-database text-xl"></i>
+                <span class="ml-3 menu-text">Data</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('users.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-users-cog text-xl"></i>
+                <span class="ml-3 menu-text">Gestion des Utilisateurs</span>
+            </a>
+        </li>
         @endrole
-        {{-- ! hna --}}
+
         @role('Account Manager')
-            <li>
-                <a href="{{ route('devis.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-layer-group text-xl"></i>
-                    <span class="ml-3 menu-text">Devis </span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('commissions.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-bank  text-xl"></i>
-                    <span class="ml-3 menu-text">Comissions </span>
-                </a>
-            </li>
-            </li>
+        <li>
+            <a href="{{ route('devis.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-file-alt text-xl"></i>
+                <span class="ml-3 menu-text">Devis</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('commissions.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-money-bill-wave text-xl"></i>
+                <span class="ml-3 menu-text">Commissions</span>
+            </a>
+        </li>
         @endrole
 
         @role('Freelancer')
-            <li>
-                <a href="{{ route('commissions.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-layer-group text-xl"></i>
-                    <span class="ml-3 menu-text">Commissions </span>
-                </a>
-            </li>
-        @endrole
-
-        @role('Super Admin')
-            <li>
-                <a href="{{ route('admin.data') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-database text-xl"></i>
-                    <span class="ml-3 menu-text">Data </span>
-                </a>
-            </li>
-        @endrole
-
-
-
-        @role('Super Admin')
-            <li>
-                <a href="{{ route('users.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-users-cog text-xl"></i>
-                    <span class="ml-3 menu-text">Gestion des Utilisateurs</span>
-                </a>
-            </li>
+        <li>
+            <a href="{{ route('commissions.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-money-bill-wave text-xl"></i>
+                <span class="ml-3 menu-text">Commissions</span>
+            </a>
+        </li>
         @endrole
 
         @can('manage subscriptions')
-            <li>
-                <a href="{{ route('abonnements.index') }}"
-                    class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                    <i class="fas fa-file-contract text-xl"></i>
-                    <span class="ml-3 menu-text">Gestion des Abonnements</span>
-                </a>
-            </li>
+        <li>
+            <a href="{{ route('abonnements.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
+                <i class="fas fa-file-contract text-xl"></i>
+                <span class="ml-3 menu-text">Gestion des Abonnements</span>
+            </a>
+        </li>
         @endcan
     </ul>
 
     <!-- Authentication Buttons -->
     <div class="mt-auto">
         @auth
-            <a href="{{ route('logout') }}"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-red-400 transition">
-                <i class="fas fa-sign-out-alt text-xl"></i>
-                <span class="ml-3 menu-text">Déconnexion</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                @csrf
-            </form>
+        <a href="{{ route('logout') }}"
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-red-400 transition">
+            <i class="fas fa-sign-out-alt text-xl"></i>
+            <span class="ml-3 menu-text">Déconnexion</span>
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
         @else
-            <a href="{{ route('login') }}"
-                class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition">
-                <i class="fas fa-sign-in-alt text-xl"></i>
-                <span class="ml-3 menu-text">Connexion</span>
-            </a>
-            <a href="{{ route('register') }}"
-                class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-green-400 transition mt-2">
-                <i class="fas fa-user-plus text-xl"></i>
-                <span class="ml-3 menu-text">Inscription</span>
-            </a>
+        <a href="{{ route('login') }}"
+            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition">
+            <i class="fas fa-sign-in-alt text-xl"></i>
+            <span class="ml-3 menu-text">Connexion</span>
+        </a>
+        <a href="{{ route('register') }}"
+            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-green-400 transition mt-2">
+            <i class="fas fa-user-plus text-xl"></i>
+            <span class="ml-3 menu-text">Inscription</span>
+        </a>
         @endauth
     </div>
 </nav>

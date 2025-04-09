@@ -87,7 +87,10 @@ class DevisController extends Controller
 
         // Calculate base montant
         $baseMontant = $validated['montant'];
-        $freelancerDevisCount = Devis::where('freelancer_id', $freelancerId)->count();
+        $freelancerDevisCount = Commission::where('freelancer_id', $freelancerId)
+            ->where('statut', 'en attent')
+            ->count();
+
 
         // Increment montant by 500, 1000, or 1500 based on devis count
         if ($freelancerDevisCount <= 10) {

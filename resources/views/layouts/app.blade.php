@@ -13,6 +13,7 @@
 </head>
 
 <body class="bg-gray-100 font-sans">
+
     <div class="flex">
         @include('layouts.navigation')
 
@@ -25,11 +26,10 @@
 
             @yield('content')
 
-            @stack('scripts') <!-- Ajoutez cette ligne pour rendre les scripts poussés -->
+            @stack('scripts')
         </div>
     </div>
 
-    <!-- Incluez SweetAlert2 ici pour garantir qu'il est chargé après le contenu -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 

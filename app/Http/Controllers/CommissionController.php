@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CommissionRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +75,10 @@ class CommissionController extends Controller
         $commissions = $query->paginate($perPage);
         $stats = $this->getCommissionStats($commissions);
 
-        return view('commissions.index', compact('commissions', 'stats', 'sold', 'level', 'contractCount'));
+        // Add freelancers for Account Manager
+        $freelancers = $user->hasRole('Account Manager') ? User::role('Freelancer')->get() : [];
+
+        return view('commissions.index', compact('commissions', 'stats', 'sold', 'level', 'contractCount', 'freelancers'));
     }
 
     public function requestAllPayments(Request $request)
@@ -399,5 +403,49 @@ class CommissionController extends Controller
             }
         }
         return null;
+    }
+
+
+    private function getValidContractCountForFreelancer($freelancerId): int
+    {
+        return Devis::where('freelancer_id', $freelancerId)
+            ->whereIn('statut', ['validé', 'Accepté'])
+            ->where('compte_pour_commission', true)
+            ->count();
+    }
+    public function showFreelancerPayments(Request $request, $freelancerId)
+    {
+        if (!Auth::user()->hasRole(['Account Manager'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $freelancer = User::findOrFail($freelancerId);
+        $perPage = $request->input('per_page', 10);
+
+        $query = Commission::with('devis', 'freelancer')
+            ->where('freelancer_id', $freelancerId)
+            ->orderBy('created_at', 'desc');
+
+        if ($request->has('status')) {
+            $query->where('statut', $request->status);
+        }
+
+        $commissions = $query->paginate($perPage);
+        $stats = $this->getCommissionStats($commissions);
+
+        // Calculate total earnings for display
+        $sold = Commission::where('freelancer_id', $freelancerId)
+            ->where('statut', 'Payé')
+            ->sum('montant');
+
+        // Level calculation could be reused from getCommissionLevel if needed
+        $contractCount = Devis::where('freelancer_id', $freelancerId)
+            ->whereIn('statut', ['validé', 'Accepté'])
+            ->where('compte_pour_commission', true)
+            ->count();
+
+        $level = $this->getCommissionLevel($contractCount)['name'] ?? 'Bronze';
+
+        return view('commissions.freelancer_payments', compact('commissions', 'stats', 'sold', 'level', 'freelancer'));
     }
 }
