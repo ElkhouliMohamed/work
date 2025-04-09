@@ -11,8 +11,15 @@ class ContactController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        
-        
+    }
+    public function show(Contact $contact)
+    {
+        // Ensure the contact belongs to the authenticated user (for Freelancers)
+        if (Auth::user()->hasRole('Freelancer') && $contact->freelancer_id !== Auth::user()->id) {
+            abort(403, 'Vous n’êtes pas autorisé à voir ce contact.');
+        }
+
+        return view('contacts.show', compact('contact'));
     }
 
     public function index(Request $request)
@@ -99,4 +106,3 @@ class ContactController extends Controller
             ->with('success', 'Contact restauré avec succès.');
     }
 }
-       

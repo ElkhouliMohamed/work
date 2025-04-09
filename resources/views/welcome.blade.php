@@ -4,363 +4,489 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdlabFactory Freelance - Gérer vos projets facilement</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Use Font Awesome CDN stylesheet -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTJhFfiMnSyHmmM8BYrtTFCKQgQJ7yKSmnb9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>AdlabFactory Freelance | Plateforme de Gestion Freelance Professionnelle</title>
+    <meta name="description"
+        content="Solution tout-en-un pour gérer vos projets, clients, factures et rendez-vous en tant que freelance professionnel">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        dark: '#18181B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-out'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Enhanced custom styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f7fafc, #e2e8f0);
-            color: #2d3748;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        main {
-            flex: 1;
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Hero Section Animation */
-        .animate-fade-in {
-            animation: fadeIn 1.5s ease-in-out;
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Slide-in animation for features */
-        .animate-slide-up {
-            animation: slideUp 1s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Card Hover and Focus Effects */
-        .feature-card {
-            transition: all 0.3s ease;
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            background: #f9fafb;
-        }
-
-        .feature-card:focus-within {
-            outline: 2px solid #4299e1;
-            outline-offset: 2px;
-        }
-
-        /* Custom Button Style (Enhanced) */
-        .custom-btn {
-            @apply bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md flex items-center justify-center;
-        }
-
-        .custom-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Footer Links */
-        .footer-link:hover {
-            text-decoration: underline;
-            color: #a0aec0;
-        }
-
-        /* Icon Styling */
-        .icon {
-            transition: color 0.3s ease;
-        }
-
-        .icon:hover {
-            color: #4299e1;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .feature-card {
-                padding: 1rem;
-            }
-
-            .grid-cols-1.md\\:grid-cols-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .grid-cols-1.md\\:grid-cols-2 {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                width: 100%;
-                position: relative;
-                height: auto;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .hero-section {
-                padding: 2rem 1rem;
-            }
-
-            .custom-btn {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.875rem;
-            }
-
-            .icon {
-                font-size: 1rem;
-            }
-        }
-
-        /* Smooth Scroll Behavior */
-        html {
-            scroll-behavior: smooth;
+        .btn-hover-effect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
         }
     </style>
 </head>
 
-<body class="overflow-x-hidden">
+<body class="font-sans antialiased bg-gray-50 text-gray-800">
+    <!-- Navigation -->
+    <nav class="glass-effect fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-briefcase text-primary-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">Adlab<span
+                                class="gradient-text">Factory</span></span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-center space-x-8">
+                        <a href="#features"
+                            class="text-gray-600 hover:text-primary-600 transition-colors duration-200 font-medium">Fonctionnalités</a>
+                        <a href="#testimonials"
+                            class="text-gray-600 hover:text-primary-600 transition-colors duration-200 font-medium">Témoignages</a>
+                        <a href="#pricing"
+                            class="text-gray-600 hover:text-primary-600 transition-colors duration-200 font-medium">Tarifs</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('login') }}"
+                        class="text-gray-600 hover:text-primary-600 font-medium hidden md:block">Connexion</a>
+                    <a href="{{ route('register') }}"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-lg font-medium transition-all duration-300 btn-hover-effect">
+                        Essai Gratuit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Sidebar -->
-    <div class="flex">
-        <aside class="sidebar w-64 text-white h-screen fixed" style="background: #18181B;">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold mb-6 text-gray-100 flex items-center">
-                    <i class="fa fa-briefcase mr-2"></i> AdlabFactory Freelance
+    <!-- Hero Section -->
+    <section class="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-in">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Gérez votre activité <span class="gradient-text">freelance</span> avec efficacité
                 </h1>
-                <ul>
-                    <li class="mb-4">
-                        <a href="{{ route('login') }}"
-                            class="block px-4 py-2 rounded hover:bg-blue-600 flex items-center text-gray-200 hover:text-white transition duration-200">
-                            <i class="fa fa-sign-in-alt mr-2 icon"></i> Connexion
-                        </a>
+                <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-lg">
+                    La plateforme tout-en-un pour gérer vos projets, clients, factures et rendez-vous en un seul
+                    endroit. Gagnez du temps et concentrez-vous sur ce qui compte vraiment.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{{ route('register') }}"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold text-center transition-all duration-300 btn-hover-effect">
+                        Commencer gratuitement
+                    </a>
+                    <a href="#features"
+                        class="border border-gray-300 hover:border-primary-500 text-gray-700 hover:text-primary-600 px-8 py-3 rounded-lg font-semibold text-center transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-play-circle"></i> Voir la démo
+                    </a>
+                </div>
+                <div class="mt-8 flex items-center">
+                    <div class="flex -space-x-2">
+                        <img class="w-10 h-10 rounded-full border-2 border-white"
+                            src="https://randomuser.me/api/portraits/women/12.jpg" alt="User">
+                        <img class="w-10 h-10 rounded-full border-2 border-white"
+                            src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                        <img class="w-10 h-10 rounded-full border-2 border-white"
+                            src="https://randomuser.me/api/portraits/women/45.jpg" alt="User">
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Rejoint par <span
+                                class="text-primary-600">500+</span> freelances</p>
+                        <div class="flex items-center">
+                            <div class="flex">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                            <span class="ml-2 text-sm font-medium text-gray-600">5.0 (200 avis)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative animate-float">
+                <div class="relative z-10">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+                        alt="Dashboard Preview" class="rounded-xl shadow-2xl border-8 border-white">
+                </div>
+                <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-primary-100 rounded-full blur-xl opacity-70"></div>
+                <div class="absolute -top-8 -right-8 w-32 h-32 bg-purple-100 rounded-full blur-xl opacity-70"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Logo -->
+    <section class="py-12 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-500 mb-8">Ils nous font confiance</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-center">
+                <img src="https://logo.clearbit.com/slack.com" alt="Slack"
+                    class="h-8 opacity-60 hover:opacity-100 transition-opacity mx-auto">
+                <img src="https://logo.clearbit.com/airbnb.com" alt="Airbnb"
+                    class="h-8 opacity-60 hover:opacity-100 transition-opacity mx-auto">
+                <img src="https://logo.clearbit.com/spotify.com" alt="Spotify"
+                    class="h-8 opacity-60 hover:opacity-100 transition-opacity mx-auto">
+                <img src="https://logo.clearbit.com/netflix.com" alt="Netflix"
+                    class="h-8 opacity-60 hover:opacity-100 transition-opacity mx-auto">
+                <img src="https://logo.clearbit.com/google.com" alt="Google"
+                    class="h-8 opacity-60 hover:opacity-100 transition-opacity mx-auto">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span
+                class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-primary-100 text-primary-800 mb-4">Fonctionnalités</span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Tout ce dont vous avez besoin pour réussir</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Une plateforme complète conçue spécifiquement pour les
+                freelances professionnels</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div
+                class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 feature-card animate-slide-up">
+                <div
+                    class="w-14 h-14 bg-primary-50 rounded-lg flex items-center justify-center mb-6 feature-icon transition-transform duration-300">
+                    <i class="fas fa-users text-primary-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Gestion des Clients</h3>
+                <p class="text-gray-600 mb-4">Centralisez toutes les informations de vos clients, suivez les
+                    interactions et créez des relations durables.</p>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> CRM intégré
                     </li>
-                    <li>
-                        <a href="{{ route('register') }}"
-                            class="block px-4 py-2 rounded hover:bg-blue-600 flex items-center text-gray-200 hover:text-white transition duration-200">
-                            <i class="fa fa-user-plus mr-2 icon"></i> Inscription
-                        </a>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Historique des échanges
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Segmentation avancée
                     </li>
                 </ul>
             </div>
-        </aside>
 
-        <!-- Main Content -->
-        <div class="main-content ml-64 w-screen">
-            <main>
-                <!-- Hero Section -->
-                <section class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-24 animate-fade-in">
-                    <div class="container mx-auto px-4 text-center">
-                        <h2 class="text-4xl font-extrabold mb-6 leading-tight">Bienvenue sur AdlabFactory Freelance</h2>
-                        <p class="text-lg mb-8 max-w-2xl mx-auto">Gérez vos abonnements, devis, rendez-vous et
-                            commissions en toute simplicité. Boostez votre activité freelance avec nos outils puissants
-                            et intuitifs.</p>
-                        <a href="{{ route('login') }}" class="custom-btn">
-                            <i class="fa fa-rocket mr-2"></i> Commencer Maintenant
-                        </a>
-                    </div>
-                </section>
+            <!-- Feature 2 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 feature-card animate-slide-up"
+                style="animation-delay: 0.2s">
+                <div
+                    class="w-14 h-14 bg-primary-50 rounded-lg flex items-center justify-center mb-6 feature-icon transition-transform duration-300">
+                    <i class="fas fa-file-invoice-dollar text-primary-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Facturation Pro</h3>
+                <p class="text-gray-600 mb-4">Créez des devis et factures professionnels en quelques clics, avec suivi
+                    des paiements et rappels automatiques.</p>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Modèles personnalisables
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Paiements en ligne
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Rappels automatiques
+                    </li>
+                </ul>
+            </div>
 
-                <!-- Features Section -->
-                <section class="container mx-auto px-4 py-16">
-                    <div class="text-center mb-12">
-                        <h3 class="text-3xl font-bold text-gray-800 mb-4 flex items-center justify-center">
-                            <i class="fa fa-tools mr-2"></i> Nos Fonctionnalités Clés
-                        </h3>
-                        <p class="text-gray-600 max-w-2xl mx-auto">Tout ce dont vous avez besoin pour gérer vos projets,
-                            clients et revenus efficacement.</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div
-                            class="feature-card animate-slide-up bg-white shadow-lg rounded-lg p-6 text-center border border-gray-100">
-                            <div class="text-blue-500 mb-4">
-                                <i class="fa fa-users fa-2x"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-2">Gestion des Clients</h4>
-                            <p class="text-gray-600">Suivez vos clients, prospects et interactions grâce à notre CRM
-                                intégré.</p>
-                        </div>
-                        <div
-                            class="feature-card animate-slide-up bg-white shadow-lg rounded-lg p-6 text-center border border-gray-100 delay-200">
-                            <div class="text-blue-500 mb-4">
-                                <i class="fa fa-calendar-alt fa-2x"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-2">Planification des Rendez-vous</h4>
-                            <p class="text-gray-600">Organisez vos réunions et recevez des rappels automatiques.</p>
-                        </div>
-                        <div
-                            class="feature-card animate-slide-up bg-white shadow-lg rounded-lg p-6 text-center border border-gray-100 delay-400">
-                            <div class="text-blue-500 mb-4">
-                                <i class="fa fa-file-invoice fa-2x"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-2">Devis & Factures</h4>
-                            <p class="text-gray-600">Créez des devis professionnels et gérez vos factures facilement.
-                            </p>
-                        </div>
-                    </div>
-                </section>
+            <!-- Feature 3 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 feature-card animate-slide-up"
+                style="animation-delay: 0.4s">
+                <div
+                    class="w-14 h-14 bg-primary-50 rounded-lg flex items-center justify-center mb-6 feature-icon transition-transform duration-300">
+                    <i class="fas fa-calendar-check text-primary-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Agenda Intelligent</h3>
+                <p class="text-gray-600 mb-4">Planifiez vos rendez-vous et réunions avec un système de réservation
+                    automatique et des rappels.</p>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Synchronisation calendrier
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Page de réservation
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i> Rappels automatiques
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-                <!-- Testimonials Section -->
-                <section class="bg-gray-100 py-16">
-                    <div class="container mx-auto px-4 text-center">
-                        <h3 class="text-3xl font-bold text-gray-800 mb-8 flex items-center justify-center">
-                            <i class="fa fa-quote-left mr-2"></i> Ce que disent nos utilisateurs
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
-                                <p class="text-gray-600 italic mb-4">"AdlabFactory m’a permis de gérer mes projets et
-                                    mes commissions de manière fluide. Un outil indispensable !"</p>
-                                <p class="font-semibold text-gray-800 flex items-center">
-                                    <i class="fa fa-user mr-2"></i> - Sarah M., Freelance
-                                </p>
-                            </div>
-                            <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in delay-200">
-                                <p class="text-gray-600 italic mb-4">"L’interface est intuitive et les paiements sont
-                                    sécurisés. Je recommande vivement !"</p>
-                                <p class="font-semibold text-gray-800 flex items-center">
-                                    <i class="fa fa-user mr-2"></i> - Karim L., Client
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+    <!-- Stats Section -->
+    <section class="py-16 bg-primary-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="animate-fade-in">
+                    <div class="text-4xl font-bold mb-2">5,000+</div>
+                    <div class="text-primary-100">Freelances actifs</div>
+                </div>
+                <div class="animate-fade-in" style="animation-delay: 0.2s">
+                    <div class="text-4xl font-bold mb-2">1.2M€</div>
+                    <div class="text-primary-100">Facturés chaque mois</div>
+                </div>
+                <div class="animate-fade-in" style="animation-delay: 0.4s">
+                    <div class="text-4xl font-bold mb-2">98%</div>
+                    <div class="text-primary-100">Satisfaction clients</div>
+                </div>
+                <div class="animate-fade-in" style="animation-delay: 0.6s">
+                    <div class="text-4xl font-bold mb-2">24/7</div>
+                    <div class="text-primary-100">Support disponible</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Call to Action -->
-                <section
-                    class="bg-gradient-to-r from-green-500 to-teal-600 text-white py-16 text-center animate-fade-in">
-                    <div class="container mx-auto px-4">
-                        <h3 class="text-3xl font-bold mb-4 flex items-center justify-center">
-                            <i class="fa fa-bolt mr-2"></i> Prêt à booster votre activité ?
-                        </h3>
-                        <p class="mb-6 max-w-xl mx-auto">Inscrivez-vous aujourd’hui et découvrez toutes les
-                            fonctionnalités pour réussir en tant que freelance.</p>
-                        <a href="{{ route('register') }}" class="custom-btn">
-                            <i class="fa fa-user-plus mr-2"></i> Créer un Compte Gratuit
-                        </a>
-                    </div>
-                </section>
-            </main>
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span
+                class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-primary-100 text-primary-800 mb-4">Témoignages</span>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ce que disent nos utilisateurs</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Découvrez comment AdlabFactory a transformé leur activité
+                freelance</p>
+        </div>
 
-            <!-- Footer -->
-            <footer class="bg-gray-800 text-white py-8">
-                <div class="container mx-auto px-4">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div>
-                            <h4 class="font-bold mb-4 flex items-center">
-                                <i class="fa fa-building mr-2"></i> AdlabFactory
-                            </h4>
-                            <p class="text-gray-400">Votre partenaire pour une gestion freelance efficace.</p>
-                        </div>
-                        <div>
-                            <h4 class="font-bold mb-4 flex items-center">
-                                <i class="fa fa-link mr-2"></i> Liens Utiles
-                            </h4>
-                            <ul class="space-y-2">
-                                <li><a href="#" class="footer-link text-gray-400 hover:text-white flex items-center">
-                                        <i class="fa fa-info-circle mr-2"></i> À propos
-                                    </a></li>
-                                <li><a href="#" class="footer-link text-gray-400 hover:text-white flex items-center">
-                                        <i class="fa fa-cogs mr-2"></i> Services
-                                    </a></li>
-                                <li><a href="#" class="footer-link text-gray-400 hover:text-white flex items-center">
-                                        <i class="fa fa-envelope mr-2"></i> Contact
-                                    </a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold mb-4 flex items-center">
-                                <i class="fa fa-headset mr-2"></i> Support
-                            </h4>
-                            <ul class="space-y-2">
-                                <li><a href="#"
-                                        class="footer-link text-gray-400 hover:text-white flex items-center"><i
-                                            class="fa fa-envelope mr-2"></i>Support Email</a></li>
-                                <li><a href="https://wa.me/1234567890" target="_blank"
-                                        class="footer-link text-gray-400 hover:text-white flex items-center"><i
-                                            class="fab fa-whatsapp mr-2"></i>WhatsApp</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold mb-4 flex items-center">
-                                <i class="fa fa-share-alt mr-2"></i> Restez Connecté
-                            </h4>
-                            <div class="flex space-x-4 justify-center md:justify-start">
-                                <a href="#" class="text-gray-400 hover:text-white transition duration-200 icon">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a>
-                                <a href="#" class="text-gray-400 hover:text-white transition duration-200 icon">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                                <a href="#" class="text-gray-400 hover:text-white transition duration-200 icon">
-                                    <i class="fab fa-linkedin-in"></i>
-                                </a>
-                            </div>
-                        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg animate-slide-up">
+                <div class="flex items-center mb-6">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Martin"
+                        class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="font-bold">Sarah Martin</h4>
+                        <p class="text-gray-600">Comerciante </p>
                     </div>
-                    <div class="mt-8 text-center text-gray-400">
-                        <p class="flex items-center justify-center">
-                            <i class="fa fa-copyright mr-2"></i> © 2025 AdlabFactory Freelance. Tous droits réservés.
+                </div>
+                <p class="text-gray-700 mb-6 italic">"AdlabFactory a révolutionné ma façon de travailler. Je gagne au
+                    moins 10 heures par semaine sur l'administratif et je peux enfin me concentrer sur ma création. La
+                    gestion des factures est un vrai bonheur !"</p>
+                <div class="flex">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="bg-white p-8 rounded-xl shadow-lg animate-slide-up" style="animation-delay: 0.2s">
+                <div class="flex items-center mb-6">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Thomas Leroy"
+                        class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="font-bold">Thomas Leroy</h4>
+                        <p class="text-gray-600">
+                            Comerciale
                         </p>
                     </div>
                 </div>
-            </footer>
+                <p class="text-gray-700 mb-6 italic">"En tant que développeur freelance, je détestais la partie
+                    administrative. Avec AdlabFactory, tout est automatisé et tellement simple. Je recommande à tous mes
+                    collègues freelances !"</p>
+                <div class="flex">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-primary-500 to-primary-700 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Prêt à transformer votre activité freelance ?</h2>
+            <p class="text-xl text-primary-100 mb-8">Essayez AdlabFactory gratuitement .</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ route('register') }}"
+                    class="bg-white text-primary-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-center transition-all duration-300 btn-hover-effect">
+                    Commencer gratuitement
+                </a>
+                <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                    class="border border-white text-white hover:bg-white hover:text-primary-600 px-8 py-3 rounded-lg font-semibold text-center transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-envelope"></i> Contactez-nous
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">AdlabFactory</h3>
+                    <p class="mb-4">La plateforme tout-en-un pour les freelances professionnels.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                            class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                            class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                            class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Produit</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Fonctionnalités</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Tarifs</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Nouveautés</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Entreprise</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">À propos</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Carrières</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Presse</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Centre d'aide</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">Confidentialité</a></li>
+                        <li><a href="https://adlabfactory.ma/a-propos-de-nous/"
+                                class="hover:text-white transition-colors">CGU</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p>© 2025 AdlabFactory. Tous droits réservés.</p>
+                <div class="mt-4 md:mt-0 flex space-x-6">
+                    <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                        class="hover:text-white transition-colors">Confidentialité</a>
+                    <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                        class="hover:text-white transition-colors">Conditions</a>
+                    <a href="https://adlabfactory.ma/a-propos-de-nous/"
+                        class="hover:text-white transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Enhanced animations and interactivity
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.animate-fade-in, .animate-slide-up');
-            elements.forEach((element, index) => {
-                setTimeout(() => {
-                    element.classList.add('opacity-0');
-                    setTimeout(() => element.classList.remove('opacity-0'), 100);
-                }, index * 200); // Staggered animation
-            });
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="https://adlabfactory.ma/a-propos-de-nous/"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
 
-            // Smooth scroll for links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
                 });
             });
         });
-    </script>
 
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.animate-slide-up, .animate-fade-in');
+
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementPosition < windowHeight - 100) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+    </script>
 </body>
 
 </html>

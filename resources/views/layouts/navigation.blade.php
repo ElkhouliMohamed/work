@@ -1,85 +1,102 @@
-<nav id="sidebar" class="w-64 h-screen fixed bg-[#18181B] text-white p-4 flex flex-col transition-all duration-300">
+<nav id="sidebar"
+    class="w-64 h-screen fixed bg-gray-900 text-gray-100 p-5 flex flex-col transition-all duration-300 ease-in-out border-r border-gray-700">
     <!-- Toggle Button -->
-    <button id="toggleSidebar" class="text-white mb-6 focus:outline-none">
-        <i class="fas fa-bars text-2xl"></i>
+    <button id="toggleSidebar"
+        class="text-gray-300 hover:text-white mb-8 focus:outline-none self-end transition-colors duration-200">
+        <i class="fas fa-bars text-xl"></i>
     </button>
 
     <!-- Logo/Brand -->
-    <div class="mb-10 flex items-center space-x-2">
-        <i class="fas fa-briefcase text-yellow-400 text-2xl"></i>
-        <span id="brandText" class="text-3xl font-bold">Freelance Hub</span>
+    <div class="mb-10 flex items-center space-x-3 px-2">
+
+        <span id="brandText" class="text-2xl font-semibold tracking-tight">Adlab Hub</span>
     </div>
 
     <!-- Navigation Menu -->
-    <ul class="space-y-4">
+    <ul class="space-y-2 flex-1">
         <li>
             <a href="{{ route('dashboard') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-tachometer-alt text-xl"></i>
-                <span class="ml-3 menu-text">Dashboard</span>
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-tachometer-alt text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text font-medium">Dashboard</span>
             </a>
         </li>
         <li>
             <a href="{{ route('contacts.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-address-book text-xl"></i>
-                <span class="ml-3 menu-text">Gestion des Contacts</span>
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-address-book text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text font-medium">Contacts</span>
             </a>
         </li>
         <li>
             <a href="{{ route('rdvs.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-calendar-alt text-xl"></i>
-                <span class="ml-3 menu-text">Gestion des RDV</span>
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-calendar-alt text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text font-medium">Rendez-vous</span>
             </a>
         </li>
 
         @role('Super Admin')
-        <li>
-            <a href="{{ route('plans.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-layer-group text-xl"></i>
-                <span class="ml-3 menu-text">Gestion des Plans</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('admin.data') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-database text-xl"></i>
-                <span class="ml-3 menu-text">Data</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('users.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-users-cog text-xl"></i>
-                <span class="ml-3 menu-text">Gestion des Utilisateurs</span>
-            </a>
+        <li class="pt-4 mt-4 border-t border-gray-800">
+            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Administration</span>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ route('plans.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-layer-group text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Plans</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.data') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-database text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Data</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('users.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-users-cog text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Utilisateurs</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         @endrole
 
         @role('Account Manager')
-        <li>
-            <a href="{{ route('devis.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-file-alt text-xl"></i>
-                <span class="ml-3 menu-text">Devis</span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('commissions.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-money-bill-wave text-xl"></i>
-                <span class="ml-3 menu-text">Commissions</span>
-            </a>
+        <li class="pt-4 mt-4 border-t border-gray-800">
+            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Gestion</span>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ route('devis.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-file-alt text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Devis</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('commissions.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Commissions</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         @endrole
 
         @role('Freelancer')
         <li>
             <a href="{{ route('commissions.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-money-bill-wave text-xl"></i>
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
                 <span class="ml-3 menu-text">Commissions</span>
             </a>
         </li>
@@ -88,21 +105,21 @@
         @can('manage subscriptions')
         <li>
             <a href="{{ route('abonnements.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-yellow-400 transition">
-                <i class="fas fa-file-contract text-xl"></i>
-                <span class="ml-3 menu-text">Gestion des Abonnements</span>
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-file-contract text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text">Abonnements</span>
             </a>
         </li>
         @endcan
     </ul>
 
     <!-- Authentication Buttons -->
-    <div class="mt-auto">
+    <div class="mt-auto pt-4 border-t border-gray-800">
         @auth
         <a href="{{ route('logout') }}"
             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-red-400 transition">
-            <i class="fas fa-sign-out-alt text-xl"></i>
+            class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-red-400 transition-colors duration-200 group">
+            <i class="fas fa-sign-out-alt text-lg w-6 text-center text-gray-400 group-hover:text-red-400"></i>
             <span class="ml-3 menu-text">Déconnexion</span>
         </a>
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
@@ -110,35 +127,65 @@
         </form>
         @else
         <a href="{{ route('login') }}"
-            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition">
-            <i class="fas fa-sign-in-alt text-xl"></i>
+            class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition-colors duration-200 group">
+            <i class="fas fa-sign-in-alt text-lg w-6 text-center text-gray-400 group-hover:text-blue-400"></i>
             <span class="ml-3 menu-text">Connexion</span>
         </a>
         <a href="{{ route('register') }}"
-            class="flex items-center justify-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-green-400 transition mt-2">
-            <i class="fas fa-user-plus text-xl"></i>
+            class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-green-400 transition-colors duration-200 group mt-2">
+            <i class="fas fa-user-plus text-lg w-6 text-center text-gray-400 group-hover:text-green-400"></i>
             <span class="ml-3 menu-text">Inscription</span>
         </a>
         @endauth
     </div>
 </nav>
 
-<!-- JavaScript for Toggle -->
+<!-- Improved JavaScript for Toggle -->
 <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleSidebar = document.getElementById('toggleSidebar');
-    const menuTextElements = document.querySelectorAll('.menu-text');
-    const brandText = document.getElementById('brandText');
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const menuTextElements = document.querySelectorAll('.menu-text');
+        const brandText = document.getElementById('brandText');
 
-    toggleSidebar.addEventListener('click', () => {
-        if (sidebar.style.width === '16rem') {
-            sidebar.style.width = '4rem';
-            menuTextElements.forEach(el => el.style.display = 'none');
-            brandText.style.display = 'none';
-        } else {
-            sidebar.style.width = '16rem';
-            menuTextElements.forEach(el => el.style.display = 'inline');
-            brandText.style.display = 'inline';
+        // Check for saved state in localStorage
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+        // Apply initial state
+        if (isCollapsed) {
+            collapseSidebar();
+        }
+
+        toggleSidebar.addEventListener('click', () => {
+            if (sidebar.classList.contains('w-16')) {
+                expandSidebar();
+                localStorage.setItem('sidebarCollapsed', 'false');
+            } else {
+                collapseSidebar();
+                localStorage.setItem('sidebarCollapsed', 'true');
+            }
+        });
+
+        function collapseSidebar() {
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-16');
+            menuTextElements.forEach(el => el.style.opacity = '0');
+            menuTextElements.forEach(el => el.style.position = 'absolute');
+            brandText.style.opacity = '0';
+            brandText.style.position = 'absolute';
+            // Change icon to indicate expand
+            toggleSidebar.innerHTML = '<i class="fas fa-chevron-right text-xl"></i>';
+        }
+
+        function expandSidebar() {
+            sidebar.classList.remove('w-16');
+            sidebar.classList.add('w-64');
+            menuTextElements.forEach(el => el.style.opacity = '1');
+            menuTextElements.forEach(el => el.style.position = 'static');
+            brandText.style.opacity = '1';
+            brandText.style.position = 'static';
+            // Change icon to indicate collapse
+            toggleSidebar.innerHTML = '<i class="fas fa-bars text-xl"></i>';
         }
     });
 </script>

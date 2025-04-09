@@ -44,6 +44,7 @@ Route::get('/abonnements/plans', function () {
  * Routes accessible only to authenticated users.
  */
 Route::middleware(['auth'])->group(function () {
+    Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');
     // Request payment for all commissions
     Route::get('/commissions/request-all-payments', [CommissionController::class, 'requestAllPayments'])->name('commissions.request_all_payments');
 

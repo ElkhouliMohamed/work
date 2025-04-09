@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Plan;
 use App\Models\Rdv;
 use App\Models\Contact;
+use App\Models\Devis;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Notifications\AssignedToRdv;
@@ -103,7 +104,7 @@ class RdvController extends Controller
 
         $manager->notify(new AssignedToRdv($rdv));
 
-        return redirect()->route('rdvs.index')->with('success', 'Rendez-vous créé avec succès et assigné à un Account Manager.');
+        return redirect()->back();
     }
 
     /**
