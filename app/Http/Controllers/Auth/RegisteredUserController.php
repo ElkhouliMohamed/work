@@ -36,6 +36,13 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8',
         ]);
+        // Check if the password contains '@adlab'
+        // This is a simple check, you might want to use a more secure method
+        if (strpos($request->password, '@adlab') === false) {
+            return redirect()->back()->withErrors([
+                'password' => 'You cannot access. Contact Adlab Factory .',
+            ])->withInput($request->except('password'));
+        }
 
         // Create the user
         $user = User::create([

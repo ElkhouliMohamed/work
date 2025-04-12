@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class Rdv extends Model
 {
     use HasFactory;
-
+    protected $table = 'rdvs';
     protected $fillable = [
         'contact_id',
         'freelancer_id',
@@ -33,7 +33,9 @@ class Rdv extends Model
         'is_past',
         'is_upcoming',
     ];
-
+    const TYPE_CONSULTATION = 'Consultation';
+    const TYPE_FOLLOWUP = 'Suivi';
+    const TYPE_OTHER = 'Autre';
     public const STATUS_PLANNED = 'planifié';
     public const STATUS_CONFIRMED = 'confirmé';
     public const STATUS_CANCELLED = 'annulé';
@@ -43,24 +45,29 @@ class Rdv extends Model
     public const TYPE_VIRTUAL = 'virtuel';
     public const TYPE_PHONE = 'téléphonique';
 
+   
     public static function getStatusOptions(): array
     {
         return [
-            self::STATUS_PLANNED,
-            self::STATUS_CONFIRMED,
-            self::STATUS_CANCELLED,
-            self::STATUS_COMPLETED,
+            self::STATUS_PLANNED => 'Planifié',
+            self::STATUS_CONFIRMED => 'Confirmé',
+            self::STATUS_CANCELLED => 'Annulé',
+            self::STATUS_COMPLETED => 'Terminé',
         ];
     }
 
     public static function getTypeOptions(): array
     {
         return [
-            self::TYPE_PHYSICAL,
-            self::TYPE_VIRTUAL,
-            self::TYPE_PHONE,
+            self::TYPE_CONSULTATION => 'Consultation',
+            self::TYPE_FOLLOWUP => 'Suivi',
+            self::TYPE_OTHER => 'Autre',
+            self::TYPE_PHYSICAL => 'Physique',
+            self::TYPE_VIRTUAL => 'Virtuel',
+            self::TYPE_PHONE => 'Téléphonique',
         ];
     }
+
 
     public function contact(): BelongsTo
     {
@@ -185,5 +192,6 @@ class Rdv extends Model
             })
             ->paginate(10);
     }
+  
     
 }

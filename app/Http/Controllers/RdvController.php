@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Plan;
 use App\Models\Rdv;
+use App\Models\Plan;
 use App\Models\Contact;
 use App\Models\Devis;
 use App\Models\User;
@@ -29,26 +29,50 @@ class RdvController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        $rdvs = Rdv::query()
-            ->with(['contact', 'freelancer', 'manager', 'devis']) // Load devis to check existence
-            ->when($user->hasRole('Freelancer'), function ($query) use ($user) {
-                return $query->where('freelancer_id', $user->id);
-            })
-            ->when($user->hasRole('Account Manager'), function ($query) use ($user) {
-                return $query->where('manager_id', $user->id);
-            })
-            ->orderByRaw('CASE WHEN EXISTS (SELECT 1 FROM devis WHERE devis.rdv_id = rdvs.id) THEN 1 ELSE 0 END') // RDVs without devis first
-            ->orderBy('date', 'asc') // Secondary sort by date
-            ->paginate(10);
+        $status = request('status', 'all');
+        $type = request('type', '');
+        $search = request('search', '');
 
-        return view('rdvs.index', [
-            'rdvs' => $rdvs,
-            'upcomingCount' => Rdv::upcoming()->count(),
-            'pastCount' => Rdv::past()->count(),
-        ]);
+        $query = Rdv::query()
+            ->with(['contact', 'freelancer', 'manager', 'devis'])
+            ->when($status !== 'all', function ($q) use ($status) {
+                return $q->where('statut', $status);
+            })
+            ->when($type, function ($q) use ($type) {
+                return $q->where('type', $type);
+            })
+            ->when($search, function ($q) use ($search) {
+                return $q->where(function ($query) use ($search) {
+                    $query->where('notes', 'like', "%{$search}%")
+                        ->orWhereHas('contact', function ($q) use ($search) {
+                            $q->where('prenom', 'like', "%{$search}%")
+                                ->orWhere('nom', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->when(auth()->user()->hasRole('Freelancer'), function ($q) {
+                return $q->where('freelancer_id', auth()->id());
+            })
+            ->when(auth()->user()->hasRole('Account Manager'), function ($q) {
+                return $q->where('manager_id', auth()->id());
+            })
+            ->orderBy('date', 'desc');
+
+        $rdvs = $query->paginate(10);
+
+        $totalCount = Rdv::count();
+        $upcomingCount = Rdv::where('date', '>', now())->count();
+        $confirmedCount = Rdv::where('statut', Rdv::STATUS_CONFIRMED)->count();
+        $completedCount = Rdv::where('statut', Rdv::STATUS_COMPLETED)->count();
+        $cancelledCount = Rdv::where('statut', Rdv::STATUS_CANCELLED)->count();
+
+        // Pass status and type options to the view
+        $statusOptions = Rdv::getStatusOptions();
+        $typeOptions = Rdv::getTypeOptions();
+
+        return view('rdvs.index', compact('rdvs', 'totalCount', 'upcomingCount', 'confirmedCount', 'completedCount', 'cancelledCount', 'status', 'type', 'search', 'statusOptions', 'typeOptions'));
     }
-
     /**
      * Show the form for creating a new RDV.
      */
@@ -61,7 +85,7 @@ class RdvController extends Controller
 
         return view('rdvs.create', [
             'contacts' => $contacts,
-            'rdvTypes' => Rdv::getTypeOptions(),
+            'rdvTypes' => Rdv::getTypeOptions(), // Make sure this returns key=>value pairs
             'minDate' => now()->addDay()->format('Y-m-d'),
             'maxDate' => now()->addMonths(3)->format('Y-m-d'),
             'plans' => $plans,
@@ -73,40 +97,51 @@ class RdvController extends Controller
      */
     public function store(Request $request)
     {
+        $validTypes = Rdv::getTypeOptions();
         $validated = $request->validate([
             'contact_id' => 'required|exists:contacts,id',
             'date' => 'required|date|after:now',
-            'type' => 'required|string',
-            'notes' => 'nullable|string',
-            'plans' => 'required|array',
+            'type' => 'required|string|in:' . implode(',', array_keys($validTypes)), // Validate against keys
+            'notes' => 'nullable|string|max:500',
+            'plans' => 'required|array|min:1',
             'plans.*' => 'exists:plans,id',
         ]);
 
-        $manager = User::role('Account Manager')
-            ->inRandomOrder()
-            ->first();
+        try {
+            // Find available manager
+            $manager = User::role('Account Manager')
+                ->inRandomOrder()
+                ->firstOrFail();
 
-        if (!$manager) {
-            return redirect()->back()->with('error', 'Aucun Account Manager n\'est disponible.');
+            // Create RDV
+            $rdv = Rdv::create([
+                'contact_id' => $validated['contact_id'],
+                'freelancer_id' => auth()->id(),
+                'manager_id' => $manager->id,
+                'date' => $validated['date'],
+                'type' => $validated['type'],
+                'notes' => $validated['notes'] ?? null,
+                'statut' => Rdv::STATUS_PLANNED,
+            ]);
+
+            // Attach plans
+            $rdv->plans()->attach($validated['plans']);
+
+            // Send notification (queued)
+            $manager->notify((new AssignedToRdv($rdv))->delay(now()->addSeconds(5)));
+
+            return response()->json([
+                'success' => true,
+                'redirect' => route('rdvs.index')
+            ]);
+        } catch (\Exception $e) {
+            Log::error('RDV creation failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création: ' . $e->getMessage()
+            ], 500);
         }
-
-        $rdv = Rdv::create([
-            'contact_id' => $validated['contact_id'],
-            'freelancer_id' => auth()->id(),
-            'manager_id' => $manager->id,
-            'date' => $validated['date'],
-            'type' => $validated['type'],
-            'notes' => $validated['notes'] ?? null,
-            'statut' => Rdv::STATUS_PLANNED,
-        ]);
-
-        $rdv->plans()->attach($validated['plans']);
-
-        $manager->notify(new AssignedToRdv($rdv));
-
-        return redirect()->back();
     }
-
     /**
      * Display the specified RDV.
      */
@@ -178,7 +213,7 @@ class RdvController extends Controller
         Gate::authorize('update', $rdv);
 
         if (!$rdv->canBeCancelled()) {
-            return back()->with('error', 'Ce rendez-vous ne peut pas être annulé.');
+            return back()->with('error', 'This appointment cannot be cancelled.');
         }
 
         $rdv->update(['statut' => Rdv::STATUS_CANCELLED]);
@@ -186,7 +221,7 @@ class RdvController extends Controller
         Notification::send([$rdv->manager, $rdv->contact], new RdvCancelled($rdv));
 
         return redirect()->route('rdvs.index')
-            ->with('success', 'Rendez-vous annulé avec succès.');
+            ->with('success', 'Appointment cancelled successfully.');
     }
 
     /**
