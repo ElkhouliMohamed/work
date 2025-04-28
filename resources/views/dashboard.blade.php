@@ -444,9 +444,9 @@
             </div>
         </div>
     </div>
-        
+
     <div class="space-y-4 mt-2">
-    @foreach($plans as $plan)
+        @foreach($plans as $plan)
         <div
             class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
             <div class="flex items-start space-x-4">
@@ -462,8 +462,8 @@
                 </div>
             </div>
         </div>
-    @endforeach
-</div>
+        @endforeach
+    </div>
 </div>
 
 <!-- Chart.js Script -->

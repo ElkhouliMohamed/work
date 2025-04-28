@@ -296,7 +296,8 @@
                                     </svg>
                                 </a>
 
-                                <form action="{{ route('rdvs.destroy', $rdv->id) }}" method="POST" class="inline">
+                                <form action="{{ route('rdvs.destroy', $rdv->id) }}" method="POST"
+                                    class="delete-form inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
