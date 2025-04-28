@@ -63,7 +63,6 @@ class DevisController extends Controller
             'plans' => 'required|array',
             'plans.*' => 'exists:plans,id',
             'montant' => 'required|numeric|min:0',
-            'commission_rate' => 'nullable|numeric|min:0|max:100',
             'statut' => 'required|string|in:Brouillon,En Attente,Accepté,Refusé,Annulé',
             'date_validite' => 'required|date|after:today',
             'notes' => 'nullable|string|max:1000',
@@ -109,8 +108,7 @@ class DevisController extends Controller
             'rdv_id' => $validated['rdv_id'],
             'contact_id' => $validated['contact_id'],
             'freelancer_id' => $freelancerId,
-            'montant' => $finalMontant,
-            'commission_rate' => 0, // No percentage, fixed amount
+            'montant' => $validated['montant'],
             'commission' => $commissionAmount,
             'statut' => $validated['statut'],
             'nombre_contrats' => 1,
@@ -130,8 +128,70 @@ class DevisController extends Controller
     /**
      * Update the specified devis in storage and handle commission if status changes to "Accepté".
      */
+
+
+    /**
+     * Remove the specified devis from storage (soft delete).
+     */
+    public function destroy(Devis $devis)
+    {
+        $this->authorizeRole(['Super Admin', 'Account Manager']);
+
+        if ($devis->statut === 'Accepté') {
+            return redirect()->route('devis.index')->with('error', 'Vous ne pouvez pas supprimer un devis accepté.');
+        }
+        if ($devis->statut === 'validé') {
+            return redirect()->route('devis.index')->with('error', 'Vous ne pouvez pas supprimer un devis validé.');
+        }
+
+        try {
+            $devis->delete();
+            Log::info('Devis deleted successfully:', ['id' => $devis->id]);
+            return redirect()->route('devis.index')->with('success', 'Devis supprimé avec succès.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error deleting Devis:', ['id' => $devis->id, 'error' => $e->getMessage()]);
+            return redirect()->route('devis.index')->with('error', 'Erreur: Impossible de supprimer en raison de contraintes de base de données.');
+        } catch (\Exception $e) {
+            Log::error('Unexpected error deleting Devis:', ['id' => $devis->id, 'error' => $e->getMessage()]);
+            return redirect()->route('devis.index')->with('error', 'Erreur inattendue lors de la suppression du devis.');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified devis.
+     */
+    public function edit(Devis $devis)
+    {
+        $this->authorizeRole(['Super Admin', 'Account Manager']);
+        $devis = Devis::with(['rdv', 'contact', 'freelancer', 'plans'])
+            ->where('id', $devis->id)
+            ->firstOrFail();
+        $rdv = Rdv::with(['contact', 'freelancer'])->findOrFail($devis->rdv_id);
+        $freelancer_selected = User::find($devis->freelancer_id);
+        $freelancers = User::role('Freelancer')->get();
+        // contact info
+        $contacts = Contact::where('id', $devis->contact_id)->get();
+        $plans = Plan::all();
+        return view('devis.edit', compact('devis', 'rdv', 'freelancers', 'plans', 'freelancer_selected', 'contacts'));
+    }
+
+    /**
+     * Display the specified devis.
+     */
+    public function show(Devis $devis)
+    {
+        $this->authorizeRole(['Super Admin', 'Account Manager']);
+        // select devis by id and freelancer info
+        $devis = Devis::with(['rdv', 'contact', 'freelancer', 'plans'])
+            ->where('id', $devis->id)
+            ->firstOrFail();
+        return view('devis.show', compact('devis'));
+    }
+
     public function update(Request $request, Devis $devis)
     {
+        Log::info('Update request data:', $request->all());
+
         $validated = $request->validate([
             'freelancer_id' => 'nullable|exists:users,id',
             'montant' => 'required|numeric|min:0',
@@ -142,65 +202,31 @@ class DevisController extends Controller
             'plans.*' => 'exists:plans,id',
         ]);
 
-        $oldStatus = $devis->statut;
-
-        $devis->update([
-            'freelancer_id' => $validated['freelancer_id'],
-            'montant' => $validated['montant'],
-            'statut' => $validated['statut'],
-            'date_validite' => $validated['date_validite'],
-            'notes' => $validated['notes'] ?? null,
-        ]);
-
-        $devis->plans()->sync($validated['plans']);
-
-        if ($validated['statut'] === 'Accepté' && $oldStatus !== 'Accepté') {
-            $this->handleAcceptedStatus($devis);
-        } else {
-            $this->updateCommission($devis);
-        }
-
-        return redirect()->route('devis.index')->with('success', 'Devis mis à jour avec succès.');
-    }
-
-    /**
-     * Remove the specified devis from storage (soft delete).
-     */
-    public function destroy(Devis $devis)
-    {
         try {
-            Gate::authorize('delete-devis', $devis);
+            $oldStatus = $devis->statut;
 
-            Log::info("Deleting devis with ID: " . $devis->id);
+            $devis->update([
+                'freelancer_id' => $validated['freelancer_id'],
+                'montant' => $validated['montant'],
+                'statut' => $validated['statut'],
+                'date_validite' => $validated['date_validite'],
+                'notes' => $validated['notes'] ?? null,
+            ]);
 
-            $devis->delete();
+            $devis->plans()->sync($validated['plans']);
 
-            Log::info("Devis soft deleted successfully.");
+            if ($validated['statut'] === 'Accepté' && $oldStatus !== 'Accepté') {
+                $this->handleAcceptedStatus($devis);
+            } else {
+                $this->updateCommission($devis);
+            }
 
-            return redirect()->route('devis.index')->with('success', 'Devis supprimé avec succès.');
+            Log::info('Devis updated successfully:', ['id' => $devis->id]);
+            return redirect()->route('devis.index')->with('success', 'Devis mis à jour avec succès.');
         } catch (\Exception $e) {
-            Log::error("Error deleting devis: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Une erreur s’est produite lors de la suppression.');
+            Log::error('Error updating Devis:', ['id' => $devis->id, 'error' => $e->getMessage()]);
+            return back()->with('error', 'Erreur lors de la mise à jour du devis.')->withInput();
         }
-    }
-
-    /**
-     * Show the form for editing the specified devis.
-     */
-    public function edit(Devis $devis)
-    {
-        $freelancers = User::role('Freelancer')->get();
-        $plans = Plan::all();
-
-        return view('devis.edit', compact('devis', 'freelancers', 'plans'));
-    }
-
-    /**
-     * Display the specified devis.
-     */
-    public function show(Devis $devis)
-    {
-        return view('devis.show', compact('devis'));
     }
 
     /**

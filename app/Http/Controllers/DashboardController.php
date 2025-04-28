@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\Rdv;
 use App\Models\Devis;
+use App\Models\Plan;
 use App\Models\Commission;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,7 @@ class DashboardController extends Controller
         $contractCount = 0;
         $freelancers = [];
         $abonnements = [];
+        $plans = Plan::all();
 
         // Commission Query
         $commissionQuery = Commission::with('devis', 'freelancer');
@@ -226,7 +228,8 @@ class DashboardController extends Controller
             'sold',
             'level',
             'contractCount',
-            'freelancers'
+            'freelancers',
+            'plans'
         ));
     }
 

@@ -33,11 +33,11 @@ class AuthenticatedSessionController extends Controller
         // Redirect the user based on their role
         $user = Auth::user();
         if ($user->hasRole('Admin')) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('dashboard');
         } elseif ($user->hasRole('Freelancer')) {
-            return redirect()->route('freelancer.dashboard');
+            return redirect()->route('dashboard');
         } elseif ($user->hasRole('Account Manager')) {
-            return redirect()->route('account_manager.dashboard');
+            return redirect()->route('dashboard');
         }
 
         // Default redirect if no specific role is matched

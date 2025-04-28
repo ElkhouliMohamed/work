@@ -444,6 +444,26 @@
             </div>
         </div>
     </div>
+        
+    <div class="space-y-4 mt-2">
+    @foreach($plans as $plan)
+        <div
+            class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+            <div class="flex items-start space-x-4">
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600 shadow-inner">
+                    <i class="fas fa-box-open text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-700 mb-1">{{ $plan->name }}</h2>
+                    <p class="text-2xl font-bold text-gray-900">{{ number_format($plan->price, 2) }} MAD</p>
+                    <div class="text-sm text-gray-500 mt-1">
+                        {{ $plan->description }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
 </div>
 
 <!-- Chart.js Script -->

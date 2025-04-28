@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    Options +FollowSymLinks
+    RewriteEngine On
+
+    # Allow access to storage files
+    RewriteRule ^storage/(.*)$ /home/u101773601/domains/adfreelance.adlabfactory.ma/storage/app/public/$1 [L]
+
+    # Ensure routing of other requests to public
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /public/$1 [L]
+    RewriteRule ^(/)?$ public/index.php [L]
+</IfModule>

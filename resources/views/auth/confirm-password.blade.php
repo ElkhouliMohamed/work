@@ -1,4 +1,6 @@
-<x-guest-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex justify-center items-center min-h-screen bg-gray-50">
         <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
             <div class="flex justify-center mb-6">
@@ -61,4 +63,4 @@
             </form>
         </div>
     </div>
-</x-guest-layout>
+@endsection

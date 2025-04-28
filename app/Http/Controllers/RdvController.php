@@ -16,6 +16,7 @@ use App\Notifications\RdvUpdated;
 use App\Notifications\RdvCancelled;
 use App\Notifications\RdvConfirmed;
 use App\Notifications\RdvCompleted;
+use Illuminate\Support\Facades\DB;
 
 class RdvController extends Controller
 {
@@ -27,6 +28,17 @@ class RdvController extends Controller
     /**
      * Display a listing of the RDVs for the authenticated user.
      */
+    public static function getTypeOptions(): array
+    {
+        return [
+            self::TYPE_CONSULTATION => 'Consultation',
+            self::TYPE_FOLLOWUP => 'Suivi',
+            self::TYPE_OTHER => 'Autre',
+            self::TYPE_PHYSICAL => 'Physique',
+            self::TYPE_VIRTUAL => 'Virtuel',
+            self::TYPE_PHONE => 'Téléphonique',
+        ];
+    }
     public function index()
     {
         $status = request('status', 'all');
@@ -155,11 +167,18 @@ class RdvController extends Controller
     /**
      * Show the form for editing the specified RDV.
      */
+    /**
+     * Show the form for editing the specified RDV.
+     */
     public function edit(Rdv $rdv)
     {
         Gate::authorize('update', $rdv);
 
-        $contacts = Contact::where('freelancer_id', auth()->id())
+        // Get all active contacts that belong to the freelancer OR the current contact
+        $contacts = Contact::where(function ($query) use ($rdv) {
+            $query->where('freelancer_id', $rdv->freelancer_id)
+                ->orWhere('id', $rdv->contact_id);
+        })
             ->active()
             ->get();
 
@@ -176,6 +195,14 @@ class RdvController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Update the specified RDV in storage.
+     */
+    /**
+     * Update the specified RDV in storage.
+     */
     /**
      * Update the specified RDV in storage.
      */
@@ -183,27 +210,64 @@ class RdvController extends Controller
     {
         Gate::authorize('update', $rdv);
 
-        $validated = $request->validate([
-            'contact_id' => 'required|exists:contacts,id,freelancer_id,' . auth()->id(),
-            'date' => 'required|date|after:now|before:' . now()->addMonths(3),
-            'type' => 'required|in:' . implode(',', Rdv::getTypeOptions()),
-            'statut' => 'required|in:' . implode(',', Rdv::getStatusOptions()),
-            'notes' => 'nullable|string|max:500',
-            'location' => 'required_if:type,' . Rdv::TYPE_PHYSICAL . '|string|max:255',
-        ]);
+        // Get valid status and type keys
+        $validStatuses = array_keys(Rdv::getStatusOptions());
+        $validTypes = array_keys(Rdv::getTypeOptions());
 
-        $originalStatus = $rdv->statut;
-        $rdv->update($validated);
+        try {
+            // Validate request
+            $validated = $request->validate([
+                'contact_id' => 'required|exists:contacts,id',
+                'date' => 'required|date|after_or_equal:now|before_or_equal:' . now()->addMonths(3)->format('Y-m-d H:i:s'),
+                'type' => 'required|in:' . implode(',', $validTypes),
+                'statut' => 'required|in:' . implode(',', $validStatuses),
+                'notes' => 'nullable|string|max:500',
+                'plans' => 'required|array|min:1',
+                'plans.*' => 'exists:plans,id',
+            ]);
 
-        if ($originalStatus !== $rdv->statut) {
-            $this->handleStatusChangeNotification($rdv, $originalStatus);
-        } else {
-            Notification::send([$rdv->manager, $rdv->freelancer], new RdvUpdated($rdv));
+            // Store original status for notification check
+            $originalStatus = $rdv->statut;
+
+            // Update RDV
+            $rdv->update([
+                'contact_id' => $validated['contact_id'],
+                'date' => $validated['date'],
+                'type' => $validated['type'],
+                'statut' => $validated['statut'],
+                'notes' => $validated['notes'],
+            ]);
+
+            // Sync plans
+            $rdv->plans()->sync($validated['plans']);
+
+            // Handle status change notifications
+            if ($originalStatus !== $rdv->statut) {
+                $this->handleStatusChangeNotification($rdv, $originalStatus);
+            } else {
+                Notification::send([$rdv->manager, $rdv->freelancer], new RdvUpdated($rdv));
+            }
+
+            return response()->json([
+                'success' => true,
+                'redirect' => route('rdvs.index')
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+                'message' => 'Validation failed'
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('RDV update failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect()->route('rdvs.index')
-            ->with('success', 'Rendez-vous mis à jour avec succès.');
     }
+
+
 
     /**
      * Cancel the specified RDV.
@@ -213,9 +277,11 @@ class RdvController extends Controller
         Gate::authorize('update', $rdv);
 
         if (!$rdv->canBeCancelled()) {
+            Log::warning('RDV cancellation failed: Cannot be cancelled', ['rdv_id' => $rdv->id]);
             return back()->with('error', 'This appointment cannot be cancelled.');
         }
 
+        Log::info('Cancelling RDV', ['rdv_id' => $rdv->id]);
         $rdv->update(['statut' => Rdv::STATUS_CANCELLED]);
 
         Notification::send([$rdv->manager, $rdv->contact], new RdvCancelled($rdv));

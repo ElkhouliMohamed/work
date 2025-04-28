@@ -60,6 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard (role-specific views handled in controller)
     Route::get('dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+    Route::get('commissions/{freelancerId}/payments', [CommissionController::class, 'showFreelancerPayments'])->name('commissions.freelancer_payments');
 
     /*
     |--------------------------------------------------------------------------
@@ -109,9 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Add this after the resource route for RDVs
-    Route::patch('/rdvs/{rdv}/cancel', [RdvController::class, 'cancel'])
-        ->name('rdvs.cancel')
-        ->middleware('can:update,rdv');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -124,7 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Devis routes with explicit parameter binding
         Route::resource('devis', DevisController::class)
             ->except(['create', 'show'])
-            ->parameters(['devis' => 'devis:uuid']); // Example of route model binding
+            ->parameters(['devis' => 'devis:id']); // Example of route model binding
 
         Route::get('devis/create/{rdv}', [DevisController::class, 'create'])
             ->name('devis.create')
@@ -159,6 +158,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         )
             ->name('abonnements.reset-commission');
     });
+    //! jadid
+    Route::patch('rdvs/{rdv}/cancel', [RdvController::class, 'cancel'])->name('rdvs.cancel')
+        ->middleware('can:cancel,rdv');
+    Route::patch('rdvs/{rdv}/complete', [RdvController::class, 'complete'])->name('rdvs.complete')
+        ->middleware('can:complete,rdv');
 });
 
 /*

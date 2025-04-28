@@ -40,12 +40,11 @@ class Rdv extends Model
     public const STATUS_CONFIRMED = 'confirmé';
     public const STATUS_CANCELLED = 'annulé';
     public const STATUS_COMPLETED = 'terminé';
-
     public const TYPE_PHYSICAL = 'physique';
     public const TYPE_VIRTUAL = 'virtuel';
     public const TYPE_PHONE = 'téléphonique';
 
-   
+
     public static function getStatusOptions(): array
     {
         return [
@@ -192,6 +191,6 @@ class Rdv extends Model
             })
             ->paginate(10);
     }
-  
-    
+
+
 }
