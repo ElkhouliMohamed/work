@@ -302,19 +302,7 @@
             </div>
         </div>
 
-        <div
-            class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
-            <div class="flex items-start space-x-4">
-                <div class="p-3 rounded-lg bg-purple-50 text-purple-600 shadow-inner">
-                    <i class="fas fa-file-contract text-xl"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-semibold text-gray-700 mb-1">Abonnements</h2>
 
-                </div>
-            </div>
-
-        </div>
         @endif
     </div>
 

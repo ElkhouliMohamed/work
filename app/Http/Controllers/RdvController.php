@@ -159,9 +159,14 @@ class RdvController extends Controller
      */
     public function show(Rdv $rdv)
     {
-        return view('rdvs.show', [
-            'rdv' => $rdv->load(['contact', 'freelancer', 'manager', 'devis']),
-        ]);
+        $contact = $rdv->contact;
+        $plans = $rdv->plans;
+        $freelancer = $rdv->freelancer;
+        $manager = $rdv->manager;
+        
+        $devis = Devis::where('rdv_id', $rdv->id)->get();
+        $statusOptions = Rdv::getStatusOptions();
+        return view('rdvs.show', compact('rdv', 'contact', 'plans', 'freelancer', 'manager', 'devis', 'statusOptions'));
     }
 
     /**
