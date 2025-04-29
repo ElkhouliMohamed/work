@@ -8,12 +8,29 @@
 
     <!-- Logo/Brand -->
     <div class="mb-10 flex items-center space-x-3 px-2">
-
         <span id="brandText" class="text-2xl font-semibold tracking-tight">Adlab Hub</span>
     </div>
 
     <!-- Navigation Menu -->
     <ul class="space-y-2 flex-1">
+        <!-- Public Routes (Accessible to All) -->
+        <li>
+            <a href="{{ route('home') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-home text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text font-medium">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('plans.index') }}"
+                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                <i class="fas fa-layer-group text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                <span class="ml-3 menu-text font-medium">Plans</span>
+            </a>
+        </li>
+
+        <!-- Authenticated Routes -->
+        @auth
         <li>
             <a href="{{ route('dashboard') }}"
                 class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
@@ -21,6 +38,9 @@
                 <span class="ml-3 menu-text font-medium">Dashboard</span>
             </a>
         </li>
+
+        <!-- Contacts (Accessible to Authenticated Users with Permission) -->
+        @can('viewAny', App\Models\Contact::class)
         <li>
             <a href="{{ route('contacts.index') }}"
                 class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
@@ -28,6 +48,10 @@
                 <span class="ml-3 menu-text font-medium">Contacts</span>
             </a>
         </li>
+        @endcan
+
+        <!-- Rendez-vous (Accessible to Authenticated Users with Permission) -->
+        @can('viewAny', App\Models\Rdv::class)
         <li>
             <a href="{{ route('rdvs.index') }}"
                 class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
@@ -35,39 +59,28 @@
                 <span class="ml-3 menu-text font-medium">Rendez-vous</span>
             </a>
         </li>
+        @endcan
 
-        @role('Super Admin')
+        <!-- Freelancer Routes -->
+        @role('Freelancer')
         <li class="pt-4 mt-4 border-t border-gray-800">
-            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Administration</span>
+            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Freelancer</span>
             <ul class="space-y-2">
+
                 <li>
-                    <a href="{{ route('plans.index') }}"
+                    <a href="{{ route('commissions.index') }}"
                         class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
                         <i
-                            class="fas fa-layer-group text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
-                        <span class="ml-3 menu-text">Plans</span>
+                            class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Commissions</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.data') }}"
-                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
-                        <i
-                            class="fas fa-database text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
-                        <span class="ml-3 menu-text">Data</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('users.index') }}"
-                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
-                        <i
-                            class="fas fa-users-cog text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
-                        <span class="ml-3 menu-text">Utilisateurs</span>
-                    </a>
-                </li>
+
             </ul>
         </li>
         @endrole
 
+        <!-- Account Manager Routes -->
         @role('Account Manager')
         <li class="pt-4 mt-4 border-t border-gray-800">
             <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Gestion</span>
@@ -92,16 +105,81 @@
         </li>
         @endrole
 
-        @role('Freelancer')
-        <li>
-            <a href="{{ route('commissions.index') }}"
-                class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
-                <i class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
-                <span class="ml-3 menu-text">Commissions</span>
-            </a>
+        <!-- Admin & Super Admin Routes -->
+        @role('Admin|Super Admin')
+        <li class="pt-4 mt-4 border-t border-gray-800">
+            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Administration</span>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ route('users.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-users-cog text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Utilisateurs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('plans.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-layer-group text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Plans</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('commissions.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Commissions</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         @endrole
 
+        <!-- Super Admin Exclusive Routes -->
+        @role('Super Admin |Admin')
+        <li class="pt-4 mt-4 border-t border-gray-800">
+            <span class="text-xs uppercase tracking-wider text-gray-500 px-4 mb-2 block menu-text">Super Admin</span>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ route('admin.data') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-database text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Data</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('abonnements.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-file-contract text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Abonnements</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('commissions.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-money-bill-wave text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Commissions</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('devis.index') }}"
+                        class="flex items-center px-4 py-3 rounded-lg hover:bg-gray-800 hover:text-indigo-300 transition-colors duration-200 group">
+                        <i
+                            class="fas fa-file-alt text-lg w-6 text-center text-gray-400 group-hover:text-indigo-300"></i>
+                        <span class="ml-3 menu-text">Devis</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endrole
+
+        <!-- Permissions-Based Routes -->
         @can('manage subscriptions')
         <li>
             <a href="{{ route('abonnements.index') }}"
@@ -111,6 +189,7 @@
             </a>
         </li>
         @endcan
+        @endauth
     </ul>
 
     <!-- Authentication Buttons -->
