@@ -5,8 +5,8 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Dashboard Overview</h1>
-            <p class="text-gray-600 mt-2">Welcome back! Here's your system summary.</p>
+            <h1 class="text-3xl font-bold text-gray-800">Tableau de Bord</h1>
+            <p class="text-gray-600 mt-2">Bienvenue ! Voici un résumé de votre système.</p>
         </div>
 
         <!-- Stats Cards -->
@@ -15,9 +15,9 @@
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 transition-all hover:shadow-md">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Appointments</p>
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total des Rendez-vous</p>
                         <h2 class="mt-1 text-3xl font-semibold text-gray-800">{{ $rdvCount }}</h2>
-                        <p class="mt-1 text-sm text-gray-500">Last 30 days</p>
+                        <p class="mt-1 text-sm text-gray-500">Derniers 30 jours</p>
                     </div>
                     <div class="bg-indigo-50 p-3 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none"
@@ -33,9 +33,9 @@
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 transition-all hover:shadow-md">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Contacts</p>
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total des Contacts</p>
                         <h2 class="mt-1 text-3xl font-semibold text-gray-800">{{ $contactCount }}</h2>
-                        <p class="mt-1 text-sm text-gray-500">Last 30 days</p>
+                        <p class="mt-1 text-sm text-gray-500">Derniers 30 jours</p>
                     </div>
                     <div class="bg-blue-50 p-3 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none"
@@ -51,9 +51,9 @@
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 transition-all hover:shadow-md">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Quotes</p>
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total des Devis</p>
                         <h2 class="mt-1 text-3xl font-semibold text-gray-800">{{ $devisCount }}</h2>
-                        <p class="mt-1 text-sm text-gray-500">Last 30 days</p>
+                        <p class="mt-1 text-sm text-gray-500">Derniers 30 jours</p>
                     </div>
                     <div class="bg-green-50 p-3 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none"
@@ -72,9 +72,9 @@
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-lg font-semibold text-gray-800">Recent Appointments</h2>
+                        <h2 class="text-lg font-semibold text-gray-800">Rendez-vous Récents</h2>
                         <a href="{{ route('rdvs.index') }}"
-                            class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View All</a>
+                            class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Voir Tous</a>
                     </div>
                 </div>
                 <div class="divide-y divide-gray-200">
@@ -82,20 +82,23 @@
                     <div class="p-4 hover:bg-gray-50 transition-colors">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="font-medium text-gray-800">{{ $rdv->name }}</p>
+                                <p class="font-medium text-gray-800">
+                                    {{ $rdv->contact->prenom }} {{ $rdv->contact->nom }} - {{
+                                    \App\Models\Rdv::getTypeOptions()[$rdv->type] ?? $rdv->type }}
+                                </p>
                                 <p class="text-sm text-gray-500 mt-1">
                                     <span class="inline-flex items-center">
                                         <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        {{ $rdv->created_at->format('M d, Y H:i') }}
+                                        {{ \App\Helpers\AppHelper::formatDate($rdv->date) }}
                                     </span>
                                 </p>
                             </div>
                             <span
-                                class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ $rdv->status === 'confirmed' ? 'bg-green-100 text-green-800' : ($rdv->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                {{ $rdv->status ?? 'pending' }}
+                                class="px-2.5 py-0.5 text-xs font-medium rounded-full {{ $rdv->statut === 'confirmed' ? 'bg-green-100 text-green-800' : ($rdv->statut === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                {{ \App\Models\Rdv::getStatusOptions()[$rdv->statut] ?? $rdv->statut }}
                             </span>
                         </div>
                         @if($rdv->notes)
@@ -110,7 +113,7 @@
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                             </path>
                         </svg>
-                        <p class="mt-2 text-sm">No recent appointments found</p>
+                        <p class="mt-2 text-sm">Aucun rendez-vous récent trouvé</p>
                     </div>
                     @endforelse
                 </div>
@@ -120,9 +123,9 @@
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-lg font-semibold text-gray-800">Recent Contacts</h2>
+                        <h2 class="text-lg font-semibold text-gray-800">Contacts Récents</h2>
                         <a href="{{ route('contacts.index') }}"
-                            class="text-sm font-medium text-blue-600 hover:text-blue-500">View All</a>
+                            class="text-sm font-medium text-blue-600 hover:text-blue-500">Voir Tous</a>
                     </div>
                 </div>
                 <div class="divide-y divide-gray-200">
@@ -131,22 +134,21 @@
                         <div class="flex items-start">
                             <div class="flex-shrink-0">
                                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                                        </path>
-                                    </svg>
+                                    <span class="text-blue-600 font-medium">{{
+                                        \App\Helpers\AppHelper::initials($contact->prenom . ' ' . $contact->nom)
+                                        }}</span>
                                 </div>
                             </div>
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center justify-between">
-                                    <p class="font-medium text-gray-800">{{ $contact->name }}</p>
+                                    <p class="font-medium text-gray-800">{{ $contact->prenom }} {{ $contact->nom }}</p>
                                     <span class="text-xs text-gray-500">{{ $contact->created_at->diffForHumans()
                                         }}</span>
                                 </div>
                                 <p class="text-sm text-gray-600 mt-1">{{ $contact->email }}</p>
-                                <p class="mt-2 text-sm text-gray-600 line-clamp-2">{{ $contact->message }}</p>
+                                @if($contact->nom_entreprise)
+                                <p class="mt-2 text-sm text-gray-600">{{ $contact->nom_entreprise }}</p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -158,7 +160,7 @@
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                             </path>
                         </svg>
-                        <p class="mt-2 text-sm">No recent contacts found</p>
+                        <p class="mt-2 text-sm">Aucun contact récent trouvé</p>
                     </div>
                     @endforelse
                 </div>
@@ -168,32 +170,32 @@
         <!-- Additional Stats Section -->
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h2 class="text-lg font-semibold text-gray-800">System Statistics</h2>
+                <h2 class="text-lg font-semibold text-gray-800">Statistiques du Système</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-                <!-- Sample Stat 1 -->
+                <!-- Active Users -->
                 <div class="text-center">
-                    <p class="text-sm font-medium text-gray-500">Active Users</p>
-                    <p class="mt-1 text-2xl font-semibold text-gray-800">1,234</p>
-                    <p class="mt-1 text-xs text-green-600 font-medium">+12% from last month</p>
+                    <p class="text-sm font-medium text-gray-500">Utilisateurs Actifs</p>
+                    <p class="mt-1 text-2xl font-semibold text-gray-800">{{ $activeUsersCount }}</p>
+                    <p class="mt-1 text-xs text-green-600 font-medium">+12% par rapport au dernier mois</p>
                 </div>
-                <!-- Sample Stat 2 -->
+                <!-- Conversion Rate -->
                 <div class="text-center">
-                    <p class="text-sm font-medium text-gray-500">Conversion Rate</p>
-                    <p class="mt-1 text-2xl font-semibold text-gray-800">3.2%</p>
-                    <p class="mt-1 text-xs text-red-600 font-medium">-0.5% from last month</p>
+                    <p class="text-sm font-medium text-gray-500">Taux de Conversion</p>
+                    <p class="mt-1 text-2xl font-semibold text-gray-800">{{ number_format($conversionRate, 1) }}%</p>
+                    <p class="mt-1 text-xs text-red-600 font-medium">-0.5% par rapport au dernier mois</p>
                 </div>
-                <!-- Sample Stat 3 -->
+                <!-- Average Response Time -->
                 <div class="text-center">
-                    <p class="text-sm font-medium text-gray-500">Avg. Response Time</p>
-                    <p class="mt-1 text-2xl font-semibold text-gray-800">2.4h</p>
-                    <p class="mt-1 text-xs text-green-600 font-medium">-15% from last month</p>
+                    <p class="text-sm font-medium text-gray-500">Temps de Réponse Moyen</p>
+                    <p class="mt-1 text-2xl font-semibold text-gray-800">{{ number_format($avgResponseTime, 1) }}h</p>
+                    <p class="mt-1 text-xs text-green-600 font-medium">-15% par rapport au dernier mois</p>
                 </div>
-                <!-- Sample Stat 4 -->
+                <!-- Satisfaction Rate -->
                 <div class="text-center">
-                    <p class="text-sm font-medium text-gray-500">Satisfaction Rate</p>
-                    <p class="mt-1 text-2xl font-semibold text-gray-800">94%</p>
-                    <p class="mt-1 text-xs text-green-600 font-medium">+2% from last month</p>
+                    <p class="text-sm font-medium text-gray-500">Taux de Satisfaction</p>
+                    <p class="mt-1 text-2xl font-semibold text-gray-800">{{ $satisfactionRate }}%</p>
+                    <p class="mt-1 text-xs text-green-600 font-medium">+2% par rapport au dernier mois</p>
                 </div>
             </div>
         </div>
