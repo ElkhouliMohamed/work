@@ -454,6 +454,54 @@
     </div>
 </div>
 
+<!-- Popup Modal -->
+<div id="dailyPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
+        <button id="closePopup" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-lg"></i>
+        </button>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Services d'Adlab Factory</h2>
+        <div class="text-gray-700 space-y-4 text-sm">
+            <p>Voici la liste des services d'Adlab Factory que j'ai déjà enregistrée :</p>
+            <ul class="list-disc pl-5">
+                <li><strong>Gestion des réseaux sociaux (Meta - Facebook et Instagram) :</strong></li>
+                <ul class="list-disc pl-5">
+                    <li>Pack Basic : 4 à 6 visuels/mois, 1 campagne publicitaire par mois, rapport de performance
+                        trimestriel, étude de stratégie marketing digital, refonte du site web si nécessaire.</li>
+                    <li>Pack Essentiel : 8 à 12 visuels/mois, 2 campagnes publicitaires par mois, rapport de performance
+                        mensuel.</li>
+                    <li>Pack E-commerce : 20 à 24 visuels/mois, 4 campagnes publicitaires par mois, rapport de
+                        performance hebdomadaire, refonte du site web si nécessaire.</li>
+                </ul>
+                <li><strong>Création de sites web :</strong></li>
+                <ul class="list-disc pl-5">
+                    <li>Landing page (one page scroll) : À partir de 2500 Dhs HT.</li>
+                    <li>Site vitrine : À partir de 5000 Dhs HT.</li>
+                    <li>Site boutique : À partir de 9000 Dhs HT.</li>
+                    <li>Site e-commerce : À partir de 12000 Dhs HT.</li>
+                </ul>
+                <li><strong>Agent IA intelligent pour le support client :</strong> Proposé à partir de 5 000 Dhs
+                    HT/mois, tout inclus.</li>
+                <li><strong>Développement de solutions e-commerce (via le Pack E-commerce) :</strong> Accompagnement
+                    complet pour la gestion des campagnes publicitaires, des visuels, et l’optimisation des ventes en
+                    ligne.</li>
+                <li><strong>Consulting et stratégie marketing digital :</strong> Études de stratégie marketing digital
+                    pour les clients afin d'améliorer leur visibilité et leur retour sur investissement.</li>
+                <li><strong>Refonte et optimisation de sites web :</strong> Optimisation de sites web existants pour
+                    améliorer la conversion et l’expérience utilisateur, en particulier dans le cadre des packs de
+                    gestion des réseaux sociaux.</li>
+                <li><strong>Suivi et reporting :</strong> Rapport de performance mensuel ou hebdomadaire selon le pack
+                    choisi, incluant des recommandations d’optimisation pour les campagnes publicitaires et les
+                    stratégies sociales.</li>
+            </ul>
+            <p><strong>Nos packs mensuels :</strong> Basic (3000 Dhs TTC), Essentiel (4200 Dhs TTC), E-commerce (8400
+                Dhs TTC).</p>
+            <p><strong>SEO :</strong> SEO local (3000 Dhs one-shot), SEO avancé (6000 Dhs par mois).</p>
+            <p><em>Just for freelancer</em></p>
+        </div>
+    </div>
+</div>
+
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -581,6 +629,23 @@
                 // This would be replaced with actual data fetching logic
                 console.log(`Period changed to ${this.dataset.period}`);
             });
+        });
+
+        // Popup functionality
+        const popup = document.getElementById('dailyPopup');
+        const closePopup = document.getElementById('closePopup');
+        const popupKey = 'dailyPopupShown';
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+        // Check if the popup has already been shown today
+        if (localStorage.getItem(popupKey) !== today) {
+            popup.classList.remove('hidden'); // Show the popup
+            localStorage.setItem(popupKey, today); // Mark the popup as shown for today
+        }
+
+        // Close the popup
+        closePopup.addEventListener('click', function () {
+            popup.classList.add('hidden');
         });
     });
 </script>
